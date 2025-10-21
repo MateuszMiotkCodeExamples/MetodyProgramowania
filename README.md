@@ -129,26 +129,52 @@ Tworzy skrypty `gradlew` i `gradlew.bat`, które pozwalają uruchamiać Gradle b
 ## Uruchomienie aplikacji
 
 ### Używając Maven
-Po zbudowaniu projektu (`mvn package`):
 
+**Opcja 1: Bezpośrednie uruchomienie wykonywalnego JAR (z zależnościami)**
+```bash
+mvn clean package
+java -jar target/file-format-example-1.0.0-with-dependencies.jar
+```
+
+Maven tworzy dwa pliki JAR:
+- `file-format-example-1.0.0.jar` - standardowy JAR (bez zależności)
+- `file-format-example-1.0.0-with-dependencies.jar` - fat JAR ze wszystkimi bibliotekami
+
+**Opcja 2: Uruchomienie ze standardowym JAR (wymaga classpath)**
 ```bash
 java -cp target/file-format-example-1.0.0.jar com.example.FileFormatExample
 ```
+⚠️ To nie zadziała, ponieważ brakuje zależności (Gson, OpenCSV) w classpath.
 
 ### Używając Gradle
-Gradle umożliwia bezpośrednie uruchomienie bez wcześniejszego pakowania:
 
+**Opcja 1: Bezpośrednie uruchomienie (najłatwiejsze)**
 ```bash
 gradle run
 # lub:
 ./gradlew run
 ```
 
-Lub po zbudowaniu (`gradle build`):
-
+**Opcja 2: Wykonywalny fat JAR ze wszystkimi zależnościami**
 ```bash
-java -cp build/libs/file-format-example-1.0.0.jar com.example.FileFormatExample
+gradle fatJar
+java -jar build/libs/file-format-example-1.0.0-with-dependencies.jar
 ```
+
+**Opcja 3: Standardowy JAR (bez zależności, tylko dla demonstracji manifestu)**
+```bash
+gradle build
+java -jar build/libs/file-format-example-1.0.0.jar
+```
+⚠️ To nie zadziała, ponieważ standardowy JAR nie zawiera bibliotek zależnych.
+
+### Wyjaśnienie
+
+**Standardowy JAR** zawiera tylko kod aplikacji, bez bibliotek zależnych (Gson, OpenCSV). 
+Można go uruchomić tylko z `-cp` i dodając wszystkie zależności do classpath.
+
+**Fat JAR (uber JAR)** zawiera kod aplikacji ORAZ wszystkie biblioteki zależne, 
+co pozwala na proste uruchomienie: `java -jar nazwa.jar`
 
 Aplikacja wczyta książki z plików CSV i JSON znajdujących się w resources i wyświetli je na konsoli.
 

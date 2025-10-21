@@ -71,6 +71,50 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
             </plugin>
+            
+            <!-- Plugin do tworzenia JAR z manifestem określającym główną klasę -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <!-- Dodaje classpath do manifestu -->
+                            <addClasspath>true</addClasspath>
+                            <!-- Określa główną klasę aplikacji -->
+                            <mainClass>com.example.FileFormatExample</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            
+            <!-- 
+                Plugin do tworzenia "uber JAR" (fat JAR) ze wszystkimi zależnościami
+                Alternatywnie można użyć maven-shade-plugin lub maven-assembly-plugin
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Nazwa pliku wynikowego -->
+                            <finalName>${project.artifactId}-${project.version}-with-dependencies</finalName>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.example.FileFormatExample</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     

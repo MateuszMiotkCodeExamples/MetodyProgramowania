@@ -113,6 +113,56 @@ application {
     mainClass = 'com.example.FileFormatExample'
 }
 
+// Konfiguracja taska jar - tworzenie wykonywalnego JAR
+jar {
+    // Dodanie manifestu z główną klasą
+    manifest {
+        attributes(
+            'Main-Class': 'com.example.FileFormatExample',
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version
+        )
+    }
+    
+    /*
+     * UWAGA: Standardowy JAR nie zawiera zależności!
+     * Aby utworzyć "fat JAR" ze wszystkimi zależnościami, użyj poniższej konfiguracji:
+     */
+    // from {
+    //     configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    // }
+    // duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+// Task do tworzenia "uber JAR" (fat JAR) ze wszystkimi zależnościami
+task fatJar(type: Jar) {
+    group = 'build'
+    description = 'Tworzy JAR ze wszystkimi zależnościami (uber/fat JAR)'
+    
+    // Nazwa pliku wynikowego
+    archiveClassifier = 'with-dependencies'
+    
+    // Manifest z główną klasą
+    manifest {
+        attributes(
+            'Main-Class': 'com.example.FileFormatExample',
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version
+        )
+    }
+    
+    // Dołącz wszystkie zależności
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    
+    // Dołącz skompilowane klasy projektu
+    with jar
+    
+    // Obsługa duplikatów (np. META-INF)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 /*
  * Dodatkowe taski (tasks) - odpowiednik goals w Maven
  * 
