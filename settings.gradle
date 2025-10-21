@@ -1,0 +1,21 @@
+/*
+ * Settings Gradle - konfiguracja projektu Gradle
+ * 
+ * Ten plik definiuje podstawowe ustawienia projektu i jest pierwszym plikiem
+ * odczytywanym przez Gradle podczas inicjalizacji budowania.
+ */
+
+// Nazwa projektu - odpowiednik artifactId w Maven
+rootProject.name = 'file-format-example'
+
+/*
+ * W przypadku projektów wielomodułowych, tutaj definiuje się podprojekty:
+ * 
+ * include 'modul1', 'modul2', 'modul3'
+ * 
+ * lub z bardziej szczegółową konfiguracją:
+ * 
+ * include 'modul1'
+ * project(':modul1').projectDir = file('modules/modul1')
+ */
+

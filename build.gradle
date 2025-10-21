@@ -1,0 +1,169 @@
+/*
+ * Gradle Build Script - odpowiednik pom.xml w Maven
+ * 
+ * Gradle używa języka Groovy (lub Kotlin DSL) zamiast XML,
+ * co czyni konfigurację bardziej zwięzłą i czytelną.
+ */
+
+// Wtyczki (plugins) - rozszerzenia dodające funkcjonalność do Gradle
+plugins {
+    // Plugin 'java' dodaje wsparcie dla projektów Java (kompilacja, testy, pakowanie)
+    id 'java'
+    
+    // Plugin 'application' pozwala na uruchomienie aplikacji z linii poleceń
+    id 'application'
+}
+
+// Podstawowe informacje o projekcie - odpowiednik GAV w Maven
+group = 'com.example'                    // groupId w Maven
+version = '1.0.0'                        // version w Maven
+// artifactId jest definiowane w settings.gradle
+
+// Konfiguracja wersji Javy
+java {
+    sourceCompatibility = JavaVersion.VERSION_11  // maven.compiler.source
+    targetCompatibility = JavaVersion.VERSION_11  // maven.compiler.target
+}
+
+// Konfiguracja kodowania - odpowiednik project.build.sourceEncoding w Maven
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+// Repozytoria - skąd Gradle pobiera zależności
+repositories {
+    // Maven Central - to samo repozytorium co używa Maven
+    mavenCentral()
+    
+    /*
+     * Gradle może używać różnych repozytoriów:
+     * - mavenCentral() - główne repozytorium Maven
+     * - google() - repozytorium Google (Android)
+     * - mavenLocal() - lokalne repozytorium Maven (~/.m2/repository)
+     * - maven { url 'https://...' } - własne repozytoria
+     */
+}
+
+// Zależności - biblioteki potrzebne projektowi
+dependencies {
+    /*
+     * Gradle używa różnych konfiguracji (scopes) dla zależności:
+     * 
+     * - implementation - odpowiednik 'compile' w Maven
+     *   Biblioteka jest potrzebna do kompilacji i uruchomienia, ale nie jest
+     *   eksponowana jako zależność przechodnia dla projektów używających tego artefaktu.
+     *   To preferowana konfiguracja w nowoczesnym Gradle.
+     * 
+     * - api - jak compile w Maven
+     *   Biblioteka jest eksponowana jako zależność przechodnia.
+     *   Wymaga pluginu 'java-library'.
+     * 
+     * - compileOnly - odpowiednik 'provided' w Maven
+     *   Potrzebne tylko do kompilacji, dostarczone przez środowisko uruchomieniowe.
+     * 
+     * - runtimeOnly - odpowiednik 'runtime' w Maven
+     *   Potrzebne tylko w czasie uruchomienia, nie do kompilacji.
+     * 
+     * - testImplementation - odpowiednik 'test' w Maven
+     *   Potrzebne tylko do kompilacji i uruchomienia testów.
+     * 
+     * - testRuntimeOnly - potrzebne tylko do uruchomienia testów
+     */
+    
+    // Biblioteka Gson do obsługi JSON
+    implementation 'com.google.code.gson:gson:2.10.1'
+    
+    // Biblioteka OpenCSV do parsowania plików CSV
+    implementation 'com.opencsv:opencsv:5.8'
+    
+    // JUnit Jupiter dla testów jednostkowych - zakres testImplementation
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+    
+    /*
+     * Notacja zależności w Gradle:
+     * 'groupId:artifactId:version'
+     * 
+     * Można też użyć bardziej szczegółowej notacji:
+     * implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
+     */
+}
+
+// Konfiguracja testów - użycie JUnit Platform
+test {
+    // Używamy JUnit Jupiter (JUnit 5)
+    useJUnitPlatform()
+    
+    /*
+     * Dodatkowe opcje testowania:
+     * 
+     * // Wyświetlanie szczegółowych informacji o testach
+     * testLogging {
+     *     events "passed", "skipped", "failed"
+     *     exceptionFormat "full"
+     * }
+     * 
+     * // Równoległe wykonywanie testów
+     * maxParallelForks = 4
+     */
+}
+
+// Konfiguracja pluginu application - dla uruchamiania aplikacji
+application {
+    // Główna klasa aplikacji (z metodą main)
+    mainClass = 'com.example.FileFormatExample'
+}
+
+/*
+ * Dodatkowe taski (tasks) - odpowiednik goals w Maven
+ * 
+ * Gradle pozwala łatwo definiować własne taski:
+ */
+
+// Task do wyświetlania informacji o projekcie
+task projectInfo {
+    group = 'help'
+    description = 'Wyświetla informacje o projekcie'
+    
+    doLast {
+        println ""
+        println "=== Informacje o projekcie ==="
+        println "Nazwa: ${project.name}"
+        println "Grupa: ${project.group}"
+        println "Wersja: ${project.version}"
+        println "Java: ${java.sourceCompatibility}"
+        println "=============================="
+        println ""
+    }
+}
+
+// Task do wyświetlania wszystkich zależności
+task showDependencies {
+    group = 'help'
+    description = 'Wyświetla drzewo zależności'
+    
+    doLast {
+        configurations.runtimeClasspath.each { println it.name }
+    }
+}
+
+/*
+ * Gradle Wrapper
+ * 
+ * Gradle Wrapper to mechanizm, który pozwala uruchamiać Gradle bez jego instalacji.
+ * Skrypty gradlew (Unix/Mac) i gradlew.bat (Windows) automatycznie pobierają
+ * odpowiednią wersję Gradle jeśli nie jest zainstalowana.
+ * 
+ * Aby wygenerować wrapper:
+ * gradle wrapper --gradle-version 8.5
+ * 
+ * Użycie:
+ * ./gradlew build        (Unix/Mac)
+ * gradlew.bat build      (Windows)
+ */
+
+// Konfiguracja wrapper task
+wrapper {
+    gradleVersion = '8.5'
+    distributionType = Wrapper.DistributionType.ALL
+}
+

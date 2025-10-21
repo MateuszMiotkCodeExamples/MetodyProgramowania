@@ -1,14 +1,16 @@
-# Metody Programowania - Przykłady Maven
+# Metody Programowania - Przykłady Maven i Gradle
 
-Ten projekt zawiera przykłady użycia Apache Maven zgodnie z przewodnikiem po podstawach Maven.
+Ten projekt zawiera przykłady użycia **Apache Maven** i **Gradle** - dwóch najpopularniejszych narzędzi do automatyzacji budowania projektów Java. Projekt można budować obiema narzędziami, co pozwala na porównanie ich składni i możliwości.
 
 ## Struktura projektu
 
-Projekt demonstruje standardową strukturę katalogów Maven:
+Projekt demonstruje standardową strukturę katalogów używaną zarówno przez Maven jak i Gradle:
 
 ```
 .
 ├── pom.xml                                    # Project Object Model - konfiguracja Maven
+├── build.gradle                               # Build Script - konfiguracja Gradle
+├── settings.gradle                            # Konfiguracja projektu Gradle
 ├── src/
 │   ├── main/
 │   │   ├── java/com/example/                 # Kod źródłowy aplikacji
@@ -20,16 +22,21 @@ Projekt demonstruje standardową strukturę katalogów Maven:
 │       ├── java/com/example/                 # Testy jednostkowe
 │       │   └── FileFormatExampleTest.java
 │       └── resources/                         # Zasoby testowe
-└── target/                                    # Katalog generowany przez Maven (ignorowany w Git)
+├── target/                                    # Katalog generowany przez Maven (ignorowany w Git)
+└── build/                                     # Katalog generowany przez Gradle (ignorowany w Git)
 ```
 
 ## Technologie
 
 - **Java 11** - wersja JDK
-- **Maven 3.x** - narzędzie do budowania projektu
+- **Maven 3.x** lub **Gradle 8.5+** - narzędzia do budowania projektu
 - **Gson 2.10.1** - biblioteka do obsługi JSON
 - **OpenCSV 5.8** - biblioteka do parsowania CSV
-- **JUnit Jupiter 5.9.3** - framework do testów jednostkowych (zakres `test`)
+- **JUnit Jupiter 5.9.3** - framework do testów jednostkowych
+
+## Budowanie projektu
+
+Ten sam projekt można zbudować zarówno używając **Maven** jak i **Gradle**. Oba narzędzia używają tej samej struktury katalogów i tych samych zależności.
 
 ## Podstawowe komendy Maven
 
@@ -63,12 +70,84 @@ mvn clean install
 ```
 Czyści projekt, kompiluje, testuje, pakuje i instaluje artefakt do lokalnego repozytorium Maven (`~/.m2/repository`).
 
+## Podstawowe komendy Gradle
+
+### Kompilacja projektu
+```bash
+gradle compileJava
+# lub z Gradle Wrapper (jeśli został wygenerowany):
+./gradlew compileJava
+```
+Kompiluje kod źródłowy z `src/main/java` do `build/classes/java/main`.
+
+### Uruchomienie testów
+```bash
+gradle test
+# lub:
+./gradlew test
+```
+Kompiluje kod główny i testy, następnie uruchamia wszystkie testy jednostkowe. Raporty HTML dostępne w `build/reports/tests/test/index.html`.
+
+### Pakowanie aplikacji
+```bash
+gradle build
+# lub:
+./gradlew build
+```
+Wykonuje kompilację, testy i tworzy plik JAR w katalogu `build/libs/`.
+
+### Czyszczenie projektu
+```bash
+gradle clean
+# lub:
+./gradlew clean
+```
+Usuwa katalog `build/` z wszystkimi wygenerowanymi plikami.
+
+### Pełny cykl budowania
+```bash
+gradle clean build
+# lub:
+./gradlew clean build
+```
+Czyści projekt, kompiluje, testuje i pakuje.
+
+### Uruchomienie aplikacji (Gradle)
+```bash
+gradle run
+# lub:
+./gradlew run
+```
+Uruchamia aplikację bezpośrednio bez potrzeby wcześniejszego pakowania.
+
+### Generowanie Gradle Wrapper
+```bash
+gradle wrapper --gradle-version 8.5
+```
+Tworzy skrypty `gradlew` i `gradlew.bat`, które pozwalają uruchamiać Gradle bez jego instalacji.
+
 ## Uruchomienie aplikacji
 
-Po zbudowaniu projektu (`mvn package`), możesz uruchomić aplikację:
+### Używając Maven
+Po zbudowaniu projektu (`mvn package`):
 
 ```bash
 java -cp target/file-format-example-1.0.0.jar com.example.FileFormatExample
+```
+
+### Używając Gradle
+Gradle umożliwia bezpośrednie uruchomienie bez wcześniejszego pakowania:
+
+```bash
+gradle run
+# lub:
+./gradlew run
+```
+
+Lub po zbudowaniu (`gradle build`):
+
+```bash
+java -cp build/libs/file-format-example-1.0.0.jar com.example.FileFormatExample
 ```
 
 Aplikacja wczyta książki z plików CSV i JSON znajdujących się w resources i wyświetli je na konsoli.
@@ -104,7 +183,38 @@ Maven automatycznie:
 - Przechowuje biblioteki w lokalnym repozytorium (`~/.m2/repository`)
 - Zarządza wersjami i konfliktami zależności
 
+## Porównanie Maven vs Gradle
+
+| Aspekt | Maven | Gradle |
+|--------|-------|--------|
+| **Format konfiguracji** | XML (`pom.xml`) | Groovy DSL (`build.gradle`) |
+| **Składnia** | Verbose, deklaratywna | Zwięzła, programowalna |
+| **Wydajność** | Kompiluje wszystko za każdym razem | Incremental builds, caching |
+| **Kompilacja** | `mvn compile` | `gradle compileJava` |
+| **Testowanie** | `mvn test` | `gradle test` |
+| **Pakowanie** | `mvn package` | `gradle build` |
+| **Uruchomienie** | Wymaga `exec:java` plugin | Wbudowane `gradle run` |
+| **Katalog wyjściowy** | `target/` | `build/` |
+| **Raporty testów** | `target/surefire-reports/` | `build/reports/tests/` (HTML) |
+| **Elastyczność** | Ograniczona, sztywna struktura | Wysoka, łatwa customizacja |
+| **Krzywa uczenia** | Łatwiejsza dla początkujących | Wymaga znajomości Groovy/Kotlin |
+
+### Kluczowe różnice
+
+**Maven** jest lepszy gdy:
+- Preferujesz standardową, przewidywalną konfigurację
+- Projekty są proste i nie wymagają dużej customizacji
+- Zespół jest przyzwyczajony do XML
+
+**Gradle** jest lepszy gdy:
+- Potrzebujesz lepszej wydajności (duże projekty)
+- Wymagana jest elastyczność i customizacja
+- Projekty Android (Gradle jest standardem)
+- Preferujesz zwięzłą składnię
+
 ## Więcej informacji
 
-Szczegółowy przewodnik znajduje się w komentarzach w pliku `pom.xml`.
+- **Maven**: Szczegółowy przewodnik znajduje się w komentarzach w pliku `pom.xml`
+- **Gradle**: Szczegółowy przewodnik dostępny w pliku `GRADLE_GUIDE.md`
+- **Build.gradle**: Komentarze wyjaśniające konfigurację w pliku `build.gradle`
 
