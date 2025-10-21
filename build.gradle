@@ -76,8 +76,23 @@ dependencies {
     // Biblioteka OpenCSV do parsowania plików CSV
     implementation 'com.opencsv:opencsv:5.8'
     
-    // JUnit Jupiter dla testów jednostkowych - zakres testImplementation
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+    /*
+     * JUnit 5 (Jupiter) - konfiguracja dla testów jednostkowych
+     * 
+     * JUnit 5 składa się z trzech modułów:
+     * 1. JUnit Jupiter API - do pisania testów (@Test, assertions, itp.)
+     * 2. JUnit Jupiter Engine - silnik wykonujący testy Jupiter
+     * 3. JUnit Platform Launcher - platforma uruchamiająca testy (wymagana przez Gradle)
+     */
+    
+    // API do pisania testów - potrzebne w compile time testów
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
+    
+    // Engine wykonujący testy Jupiter - potrzebny tylko w runtime testów
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
+    
+    // Platform Launcher - wymagany przez Gradle do uruchamiania testów
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.9.3'
     
     /*
      * Notacja zależności w Gradle:
