@@ -15,7 +15,7 @@ class AssertJTests {
     @Test
     void shouldHaveCorrectMemberId() {
         LibraryMember member = new LibraryMember("LM001", "Anna Kowalska");
-        assertThat(member.getMemberId()).isEqualTo("LM001");
+        assertThat(member.getMemberId()).isEqualTo("LM0012");
     }
 
     @Test
