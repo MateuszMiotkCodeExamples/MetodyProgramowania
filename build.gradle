@@ -87,12 +87,20 @@ dependencies {
     
     // API do pisania testów - potrzebne w compile time testów
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
+    // Testy parametryczne JUnit 5
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.3'
     
     // Engine wykonujący testy Jupiter - potrzebny tylko w runtime testów
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
     
     // Platform Launcher - wymagany przez Gradle do uruchamiania testów
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.9.3'
+
+    // Hamcrest do ekspresyjnych matcherów
+    testImplementation 'org.hamcrest:hamcrest:2.2'
+
+    // AssertJ do płynnych asercji i soft assertions
+    testImplementation 'org.assertj:assertj-core:3.24.2'
     
     /*
      * Notacja zależności w Gradle:

@@ -244,3 +244,18 @@ Maven automatycznie:
 - **Gradle**: Szczegółowy przewodnik dostępny w pliku `GRADLE_GUIDE.md`
 - **Build.gradle**: Komentarze wyjaśniające konfigurację w pliku `build.gradle`
 
+## TDD i zaawansowane testy (JUnit 5, Parametry, Hamcrest, AssertJ)
+
+W gałęzi `tdd-advanced-testing-gradle-example` dodano kompletny przykład TDD oraz zaawansowanych technik testowania w Gradle w pakiecie `com.example.library`:
+
+- Kod domenowy i serwisy: `src/main/java/com/example/library/`
+- Testy: `src/test/java/com/example/library/` (TDD, testy parametryczne `@ValueSource`, `@CsvSource`, `@MethodSource`, `@EnumSource`, Hamcrest, AssertJ, SoftAssertions)
+
+Uruchomienie testów:
+
+```
+./gradlew test
+```
+
+Raport HTML: `build/reports/tests/test/index.html`.
+
